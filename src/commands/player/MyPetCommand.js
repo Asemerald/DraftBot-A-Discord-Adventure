@@ -19,13 +19,15 @@ const MyPetCommand = async function (language, message, args) {
     const tr = JsonReader.commands.myPet.getTranslation(language);
 
     if (authorPet) {
+        const user = message.mentions.users.last() ? message.mentions.users.last() : message.author
         let mypetEmbed = new discord.MessageEmbed();
         mypetEmbed.setAuthor(format(tr.embedTitle, {
-            pseudo: message.author.username
-        }), message.author.displayAvatarURL());
+            pseudo: (await entity.Player.getPseudo(language))
+        }), user.displayAvatarURL());
         mypetEmbed.setDescription(await PetEntities.getPetDisplay(authorPet, language));
         return await message.channel.send(mypetEmbed);
     }
+
 
     if (entity.discordUser_id === message.author.id) {
         await sendErrorMessage(message.author, message.channel, language, tr.noPet);
